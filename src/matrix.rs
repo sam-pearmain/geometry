@@ -14,8 +14,8 @@ pub struct StaticMatrix<T, const ROWS: usize, const COLS: usize> {
 }
 
 pub struct Matrix<T> {
-    rows: usize,
-    cols: usize, 
+    pub rows: usize,
+    pub cols: usize, 
     data: Vec<T>,
 }
 
@@ -37,6 +37,16 @@ impl<T: One + Clone> Matrix<T> {
     }
 }
 
+impl<T: Zero + One + Clone> Matrix<T> {
+    pub fn identity(dims: usize) -> Self {
+        let mut matrix = Self::zeros(dims, dims);
+        for i in 0..dims {
+            matrix[(i, i)] = T::one();
+        }
+        matrix
+    }
+}
+
 impl<T> Index<(usize, usize)> for Matrix<T> {
     type Output = T;
 
@@ -51,6 +61,26 @@ impl<T> IndexMut<(usize, usize)> for Matrix<T> {
     }
 } 
 
-impl<T> Tensor for Matrix<T> {
+impl<T> Debug for Matrix<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "matrix::{} [{}x{}]", std::any::type_name::<T>(), self.rows, self.cols)?;
+        Ok(())
+    }
+}
+
+impl<T: Debug> Display for Matrix<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for i in 0..self.rows {
+            for j in 0..self.cols {
+                write!(f, " {:?} ", self[(i, j)])?;
+            }
+            write!(f, "\n")?;
+        }
+        Ok(())
+
+    }
+}
+
+impl<T: Debug> Tensor for Matrix<T> {
     type Index = (usize, usize);
 }
