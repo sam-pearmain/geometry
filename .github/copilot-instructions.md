@@ -1,1 +1,1 @@
-all comments should be in lower case
+typically try to avoid adding comments, but if you need them all comments should be in lower case
